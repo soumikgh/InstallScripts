@@ -4,10 +4,10 @@
     command: ./bin/rails hyrax:workflow:load
     args:
       chdir: '{{ project_app_root }}'
-  # - name: create default admin set
-  #   command: ./bin/rails hyrax:default_admin_set:create
-  #   args:
-  #     chdir: '{{ project_app_root }}'
+  - name: create default admin set
+    command: ./bin/rails hyrax:default_admin_set:create
+    args:
+      chdir: '{{ project_app_root }}'
 
   become: yes
   become_user: '{{ project_owner }}'

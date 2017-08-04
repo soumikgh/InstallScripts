@@ -38,3 +38,9 @@
     regexp: "^JAVA_OPTS=.*"
     state: present
   notify: restart tomcat
+
+- name: make sure tomcat is running for fedora4
+  service:
+    name: tomcat7
+    state: started
+  become: yes
