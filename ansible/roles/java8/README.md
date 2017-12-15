@@ -1,7 +1,7 @@
 Java8
 =========
 
-Installs Oracle's Java 8.
+Installs OpenJDK 8 from Debian/Ubuntu's repositories.
 
 Requirements
 ------------
