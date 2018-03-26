@@ -4,8 +4,11 @@
   user: "{{ ansible_user }}"
   vars_files:
     - site_vars.yml
-    - site_secrets.yml
   gather_facts: true
+  tasks:
+    - name: Optionally include the site_secrets for non-tower deploys
+      include_vars: file=site_secrets.yml
+      when: tower_deploy is undefined
   roles:
     - {
         role: fedora4,
