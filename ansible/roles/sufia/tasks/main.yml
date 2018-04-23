@@ -60,8 +60,8 @@
 - name: configure nginx/passenger for the project
   include: passenger_setup.yml
 
-- name: configure postgres for the project
-  include: postgres_setup.yml
+#- name: configure postgres for the project
+#  include: postgres_setup.yml
 
 - name: create the project's solr cores
   include: solr_core_setup.yml
