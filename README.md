@@ -67,6 +67,14 @@ The choice of provisioner may be overridden by setting the environment variable 
 
 Normally, `vagrant up` will be able to determine the type of application you want to provision based upon settings in the `site_secrets.yml` file. You can override this choice by setting the `APP_TYPE` environment variable to the chosen application prior to `vagrant up`.  Valid settings for `APP_TYPE` are either `sufia` or `geoblacklight`.
 
+#### Choosing a target OS for deployment
+
+Vagrant uses a base "box" to designate the VM image upon which Vagrant will operate (or, in this case, on which to deploy the application). Currently, the default box used here is `bento/ubuntu-14.04`, which is a VM based upon a 64-bit installation of Ubuntu Trusty 14.04.
+
+A different base box may be chosen prior to invoking Vagrant for deployment by setting the `VAGRANT_VM_BOX` environment variable. This should be set to a [box name](https://www.vagrantup.com/docs/boxes.html) chosen from the publicly available collection of boxes. For example, setting `VAGRANT_VM_BOX` to `bento/ubuntu-16.04` will result in deployment to a 64-bit installation of Ubuntu Xenial 16.04.
+
+Note, currently, these install scripts are only tested against the following boxes: `bento/ubuntu-14.04` and `bento/ubuntu-16.04`
+
 ### AWS
 
 When using the `aws` provider to `vagrant up` it is necessary to define several environment variables in order to authenticate to AWS and supply a keypair with which Vagrant can log in to the new AWS EC2 instance being deployed.  These environment variables are as follows:
@@ -132,19 +140,22 @@ In the case of the plain `vagrant up` option, a VM will be brought up and config
 
 You can use `vagrant ssh` to log in to this VM when it is up. When logged out of the VM, `vagrant halt` can be used to shut down the VM. The command `vagrant destroy` will destroy it entirely, requiring another `vagrant up` to recreate it.
 
-Several ports in the running VM are made accessible on the local machine.
-Accessing the local port in a Web browser will actually result in the forwarded
-port being accessed on the VM. These ports are as follows:
+The local VM listens on a Vagrant private network that is accessible from only the local host machine. The default IP address of the VM is 10.31.63.127 but may be overridden by setting the `SAMVERA_APP_IP` environment variable on the host system to a different [RFC1918](https://en.wikipedia.org/wiki/Private_network) private IP address. (Note: be consistent in setting this environment variable if you wish to override the default VM IP address, otherwise it may revert back to the default.)
 
-Local | VM   | Description
------ | ---- | -----------
-8983  | 8983 | Solr services
-8888  | 8080 | Tomcat (if applicable)
-8080  | 80   | Application (HTTP)
-4443  | 443  | Application (HTTPS)
+Several notable ports in the running VM are accessible on the local machine. Accessing the port of the VM IP address mentioned above in a Web browser will result in the corresponding service being accessed on the VM. These ports and services are as follows:
 
-To access the Solr admin page in the VM from the local machine you would access
-this URL: `http://localhost:8983/solr`.  (Note that only the "Local" ports in the above table are directly accessible from the local machine.)
+Port | Service
+---- | -------
+8983 | Solr services
+8080 | Tomcat (if applicable)
+80   | Application (HTTP)
+443  | Application (HTTPS)
+
+For example, to access the Solr admin page in the VM from the local machine you would access this URL: `http://10.31.63.127:8983/solr`.  (Replace '10.31.63.127' with the appropriate IP if overridden via `SAMVERA_APP_IP`.)
+
+If the `vagrant-hostmanager` Vagrant plugin is installed, as recommended, then the local host's `/etc/hosts` file will be edited to insert a local hostname override. This hostname will define `project_name`.dld.vt.edu to be that of `SAMVERA_APP_IP` (or the default '10.31.63.127' if `SAMVERA_APP_IP` is not set). The `project_name` is the same setting in `ansible/site_secrets.yml`.
+
+Thus, with the `vagrant-hostmaster` plugin installed, it is possible to access the application more naturally via its hostname as described above, e.g., "https://data-repo.dld.lib.vt.edu" when `project_name` is set to "data-repo" when deploying.
 
 ### AWS
 

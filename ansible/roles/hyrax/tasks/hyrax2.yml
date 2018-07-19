@@ -1,7 +1,7 @@
 ---
 - block:
   - name: create roles
-    command: bundle exec rails iawa:add_roles
+    command: bundle exec rails vt_hyrax2:add_roles
     args:
       chdir: '{{ project_app_root }}'
   become: yes
@@ -18,7 +18,7 @@
     register: copy_user_list
 
   - name: add users
-    command: bundle exec rails iawa:populate_users
+    command: bundle exec rails vt_hyrax2:populate_users
     args:
       chdir: '{{ project_app_root }}'
     when: copy_user_list is successful
@@ -36,13 +36,13 @@
 
 - block:
   - name: upgrade users
-    command: bundle exec rails iawa:upgrade_users
+    command: bundle exec rails vt_hyrax2:upgrade_users
     args:
       chdir: '{{ project_app_root }}'
     when: copy_admin_list is successful
 
   - name: add initial controlled vocabularies
-    command: bundle exec rails iawa:add_controlled_vocabs
+    command: bundle exec rails vt_hyrax2:add_controlled_vocabs
     args:
       chdir: '{{ project_app_root }}'
   become: yes

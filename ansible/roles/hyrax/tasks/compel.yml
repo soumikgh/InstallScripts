@@ -1,0 +1,15 @@
+---
+- block:
+  - name: create default hyrax collection type
+    command: bundle exec rails hyrax:default_collection_types:create
+    args:
+      chdir: '{{ project_app_root }}'
+
+  - name: create roles
+    command: bundle exec rails compel:add_roles
+    args:
+      chdir: '{{ project_app_root }}'
+  become: yes
+  become_user: '{{ project_runner }}'
+  environment:
+    RAILS_ENV: '{{ project_app_env }}'
