@@ -209,11 +209,11 @@
   become: no
 
 - block:
-  - name: create db if necessary
-    command: bundle exec rails db:create
-    args:
-      chdir: '{{ project_app_root }}'
-    when: clone_app.changed or deploy_app.changed
+#  - name: create db if necessary
+#    command: bundle exec rails db:create
+#    args:
+#      chdir: '{{ project_app_root }}'
+#    when: clone_app.changed or deploy_app.changed
 
   - name: migrate the database
     command: bundle exec rails db:migrate
