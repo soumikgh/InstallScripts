@@ -1,4 +1,4 @@
-# Vagrantfile for installing VTUL Hydra/Rails applications
+# Vagrantfile for installing VTUL Samvera/Rails applications
 #
 # To install under OpenStack the Vagrant openstack provider needs to be installed.
 # You can install this plugin by running the following command:
@@ -13,7 +13,7 @@
 # If no "--provider" is specified during "vagrant up" then the default
 # (VirtualBox) provider will be used.
 
-$vm_box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-16.04'
+$vm_box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-18.04'
 $secrets_items = {}
 begin
   require 'yaml'
@@ -28,8 +28,10 @@ def box_name_to_ubuntu_release( box_name )
   case box_name
     when "bento/ubuntu-14.04" then [:trusty, "14.04"]
     when "bento/ubuntu-16.04" then [:xenial, "16.04"]
+    when "bento/ubuntu-18.04" then [:bionic, "18.04"]
     when "ubuntu/trusty64"    then [:trusty, "14.04"]
     when "ubuntu/xenial64"    then [:xenial, "16.04"]
+    when "ubuntu/bionic64"    then [:bionic, "18.04"]
     else                           [:unknown, ""]
   end
 end

@@ -1,7 +1,7 @@
 ---
 - name: stop tomcat
   service:
-    name: tomcat7
+    name: '{{ tomcat_service }}'
     state: stopped
 
 - name: add the fedora group
@@ -21,23 +21,34 @@
     group: '{{ fedora_group }}'
     state: directory
 
-- name: download fedora war
+- name: copy local fedora war file if it exists
+  copy:
+    src: '{{ local_files_dir }}/{{ fedora_war_filename }}'
+    dest: '{{ fedora_app_dir }}/fedora.war'
+    owner: '{{ fedora_user }}'
+    group: '{{ fedora_group }}'
+    mode: 0444
+  register: local_war_file
+  ignore_errors: True
+
+- name: download fedora war from remote if not locally provided
   get_url:
-    url: http://repo1.maven.org/maven2/org/fcrepo/fcrepo-webapp/{{ fedora_version }}/fcrepo-webapp-{{ fedora_version }}.war
+    url: '{{ fedora_war_base_url }}/{{ fedora_war_filename }}'
     dest: '{{ fedora_app_dir }}/fedora.war'
     owner: '{{ fedora_user }}'
     group: '{{ fedora_group }}'
     mode: 0444
     timeout: 100
+  when: local_war_file is failed
 
 - name: add fedora and java config options to tomcat
   lineinfile:
-    dest: /etc/default/tomcat7
+    dest: '{{ tomcat_defaults }}'
     line: JAVA_OPTS='-Dfcrepo.home={{ fedora_data_dir }} -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server {{ fedora_java_vm_opts }}'
     regexp: "^JAVA_OPTS=.*"
     state: present
 
 - name: start tomcat
   service:
-    name: tomcat7
+    name: '{{ tomcat_service }}'
     state: started
